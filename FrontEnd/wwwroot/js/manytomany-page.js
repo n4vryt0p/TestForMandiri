@@ -1,13 +1,71 @@
 ﻿"use strict"
-var gridInstance;
+var roleInstance;
 $(document).ready(function () {
     var antiForgeryToken = document.getElementsByName("__RequestVerificationToken")[0].value;
-    gridInstance = $('#roleGrid').dxDataGrid({
+    roleInstance = $('#roleGrid').dxDataGrid({
+        dataSource: DevExpress.data.AspNet.createStore({
+            key: 'roleId',
+            loadUrl: `/Manytomany/Read`,
+            insertUrl: `/Manytomany/Create`,
+            updateUrl: `/Manytomany/Edit`,
+            deleteUrl: `/Manytomany/Delete`,
+            onBeforeSend(method, ajaxOptions) {
+                let antiForgeryToken = document.getElementsByName("__RequestVerificationToken")[0].value;
+                if (antiForgeryToken) {
+                    ajaxOptions.headers = {
+                        "RequestVerificationToken": antiForgeryToken
+                    };
+                };
+            },
+        }),
+        rowAlternationEnabled: true,
+        paging: {
+            pageSize: 10,
+        },
+        pager: {
+            visible: true,
+            allowedPageSizes: [5, 10, 'all'],
+            showPageSizeSelector: true,
+            showInfo: true,
+            showNavigationButtons: true,
+        },
+        columns: [
+            {
+                dataField: 'roleName',
+                caption: 'Nama Role',
+                validationRules: [{
+                    type: 'required',
+                    message: 'Nama role harus diisi.',
+                }],
+            },
+        ],
+        editing: {
+            mode: 'popup',
+            allowAdding: true,
+            allowUpdating: true,
+            allowDeleting: true,
+            popup: {
+                title: 'Role Info',
+                showTitle: true,
+                width: 700,
+                height: 525,
+            },
+            form: {
+                items: [{
+                    itemType: 'group',
+                    colSpan: 2,
+                    items: ['roleName'],
+                }],
+            },
+        },
+    }).dxDataGrid("instance");
+
+    userInstance = $('#userGrid').dxDataGrid({
         dataSource: DevExpress.data.AspNet.createStore({
             key: 'id',
             loadUrl: `/Onetomany/Read`,
             insertUrl: `/Onetomany/Create`,
-            updateUrl: `/Onetomany/Edit`,
+            updateUrl: `/Manytomany/EditUser`,
             deleteUrl: `/Onetomany/Delete`,
             onBeforeSend(method, ajaxOptions) {
                 if (antiForgeryToken) {
@@ -47,20 +105,11 @@ $(document).ready(function () {
                 visible: false
             },
             {
-                dataField: 'email',
-                caption: 'Email',
-                validationRules: [{
-                    type: 'required',
-                    message: 'Email is required.',
-                }],
-                visible: false
-            },
-            {
                 dataField: 'namaLengkap',
-                caption: 'Nama Atasan',
+                caption: 'Nama Lengkap',
                 validationRules: [{
                     type: 'required',
-                    message: 'Nama Atasan is required.',
+                    message: 'Nama Lengkap harus diisi.',
                 }],
             },
             {
@@ -74,14 +123,23 @@ $(document).ready(function () {
                 }],
             },
             {
-                dataField: 'users',
-                caption: 'Bawahan',
+                dataField: 'email',
+                caption: 'Email',
+                validationRules: [{
+                    type: 'required',
+                    message: 'Email harus diisi.',
+                }],
+                visible: false
+            },
+            {
+                dataField: 'roles',
+                caption: 'Roles',
                 allowSorting: false,
                 allowFiltering: false,
-                editCellTemplate: tagBoxEditorTemplate2,
+                editCellTemplate: tagBoxEditorTemplate,
                 lookup: {
-                    dataSource: window.$users,
-                    valueExpr: 'id',
+                    dataSource: window.$roles,
+                    valueExpr: 'text',
                     displayExpr: 'text',
                 },
                 cellTemplate(container, options) {
@@ -97,7 +155,7 @@ $(document).ready(function () {
             allowUpdating: true,
             allowDeleting: true,
             popup: {
-                title: 'Info Atasan',
+                title: 'User Info',
                 showTitle: true,
                 width: 700,
                 height: 525,
@@ -113,13 +171,13 @@ $(document).ready(function () {
                     {
                         itemType: 'group',
                         colSpan: 2,
-                        items: ['email', 'namaLengkap']
+                        items: ['email']
                     },
                     {
                         itemType: 'group',
-                        caption: "Edit Bawahan",
+                        caption: "Edit Roles",
                         colSpan: 2,
-                        items: ['users'],
+                        items: ['roles'],
                     }
                 ],
             },
@@ -127,11 +185,11 @@ $(document).ready(function () {
     }).dxDataGrid("instance");
 });
 
-function tagBoxEditorTemplate2(cellElement, cellInfo) {
+function tagBoxEditorTemplate(cellElement, cellInfo) {
     return $('<div>').dxTagBox({
-        dataSource: window.$users,
+        dataSource: window.$roles,
         value: cellInfo.value,
-        valueExpr: 'id',
+        valueExpr: 'text',
         displayExpr: 'text',
         showSelectionControls: true,
         showMultiTagOnly: false,

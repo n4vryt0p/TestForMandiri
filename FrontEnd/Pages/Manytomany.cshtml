@@ -7,15 +7,40 @@
     <div class="col-lg-12">
         <div class="card ribbon-box">
             <div class="card-header d-flex align-items-center">
-                <div class="ribbon ribbon-primary round-shape fs-5">Many To Many</div>
-                <h5 class="card-title mb-0 flex-grow-1"></h5>
+                <h5 class="card-title mb-0 flex-grow-1">Relasi many to many, tabel AspNetUsers dengan AspNetRoles yang ditengahi oleh tabel AspNetUserRoles, User bisa memiliki banyak role, begitu juga sebaliknya.</h5>
             </div>
             <div class="card-body">
-                <div id="roleGrid"></div>
+                <!-- Nav tabs -->
+                <ul class="nav nav-pills nav-justified mb-3" role="tablist">
+                    <li class="nav-item waves-effect waves-light">
+                        <a class="nav-link active" data-bs-toggle="tab" href="#pill-justified-home-1" role="tab">
+                            Roles
+                        </a>
+                    </li>
+                    <li class="nav-item waves-effect waves-light">
+                        <a class="nav-link" data-bs-toggle="tab" href="#pill-justified-profile-1" role="tab">
+                            Users
+                        </a>
+                    </li>
+                </ul>
+                <!-- Tab panes -->
+                <div class="tab-content text-muted">
+                    <div class="tab-pane active" id="pill-justified-home-1" role="tabpanel">
+                        <p class="text-muted">Noted: Refresh halaman setelah add data. Edit/delete tidak perlu</p>
+                        <div id="roleGrid"></div>
+                    </div>
+                    <div class="tab-pane" id="pill-justified-profile-1" role="tabpanel">
+                        <p class="text-muted">Noted: Refresh halaman setelah add data. Edit/delete tidak perlu</p>
+                        <div id="userGrid"></div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
 @section scripts{
+    <script type="text/javascript">
+        var $roles = @Html.Raw(Json.Serialize(Model.GroupRoleDdl?.Roles)), $users = @Html.Raw(Json.Serialize(Model.GroupRoleDdl?.Groups));
+    </script>
     <script src="~/js/manytomany-page.js"></script>
 }
