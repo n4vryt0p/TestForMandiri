@@ -1,8 +1,17 @@
+using FrontEnd.Services;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
-_ = builder.Services.AddSingleton<IManageEngineApi, ManageEngineApi>();
+_ = builder.Services.AddDistributedMemoryCache();
+_ = builder.Services.AddResponseCaching();
+//httpclient
+_ = builder.Services.AddHttpContextAccessor().AddHttpClient("BaseClient", httpClient =>
+{
+    httpClient.DefaultRequestVersion = new Version(3, 0);
+});
+_ = builder.Services.AddSingleton<IUserManage, UserManage>();
 
 var app = builder.Build();
 
