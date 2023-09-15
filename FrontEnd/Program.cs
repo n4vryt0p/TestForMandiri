@@ -2,6 +2,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
+_ = builder.Services.AddSingleton<IManageEngineApi, ManageEngineApi>();
 
 var app = builder.Build();
 

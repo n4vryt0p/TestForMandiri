@@ -3,8 +3,21 @@
 @{
     ViewData["Title"] = "Home page";
 }
-
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+@Html.AntiForgeryToken()
+<div class="row">
+    <div class="col-lg-12">
+        <div class="card ribbon-box">
+            <div class="card-header d-flex align-items-center">
+                <div class="ribbon ribbon-primary round-shape fs-5">One to One</div>
+                <h5 class="card-title mb-0 flex-grow-1"></h5>
+            </div>
+            <div class="card-body">
+                <div id="oneGrid"></div>
+            </div>
+        </div>
+    </div>
 </div>
+
+@section scripts{
+    <script src="~/js/index-page.js"></script>
+}
