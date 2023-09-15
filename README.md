@@ -4,7 +4,7 @@ Asessment, Test
 Requirements:
 1. Visual Studio 2022
 2. .Net Core 7
-3. MS SQL Server min 2016
+3. MS SQL Server min 2014
 
 Features:
 1. Backend - Minimal API (RESTful)
