@@ -1,0 +1,21 @@
+﻿@page "{handler?}"
+@model FrontEnd.Pages.ManytomanyModel
+@{
+}
+@Html.AntiForgeryToken()
+<div class="row">
+    <div class="col-lg-12">
+        <div class="card ribbon-box">
+            <div class="card-header d-flex align-items-center">
+                <div class="ribbon ribbon-primary round-shape fs-5">Many To Many</div>
+                <h5 class="card-title mb-0 flex-grow-1"></h5>
+            </div>
+            <div class="card-body">
+                <div id="roleGrid"></div>
+            </div>
+        </div>
+    </div>
+</div>
+@section scripts{
+    <script src="~/js/manytomany-page.js"></script>
+}

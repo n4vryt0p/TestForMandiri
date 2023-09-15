@@ -157,6 +157,36 @@
         }
       }
     },
+    "/userlistaerverside": {
+      "post": {
+        "tags": [
+          "Users"
+        ],
+        "operationId": "GetUserListServersided",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GridServerSide"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Int32UserDtoList<>f__AnonymousType10"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/user/add": {
       "post": {
         "tags": [
@@ -263,6 +293,43 @@
   },
   "components": {
     "schemas": {
+      "GridServerSide": {
+        "type": "object",
+        "properties": {
+          "skip": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "take": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "requireTotalCount": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "sort": {
+            "type": "string",
+            "nullable": true
+          },
+          "filter": {
+            "type": "array",
+            "items": { },
+            "nullable": true
+          },
+          "sorting": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SortingInfo"
+            },
+            "nullable": true,
+            "readOnly": true
+          }
+        },
+        "additionalProperties": false
+      },
       "GroupDdl": {
         "type": "object",
         "properties": {
@@ -347,6 +414,23 @@
         },
         "additionalProperties": false
       },
+      "Int32UserDtoList<>f__AnonymousType10": {
+        "type": "object",
+        "properties": {
+          "totalCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UserDto"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "RoleDto": {
         "type": "object",
         "properties": {
@@ -370,12 +454,26 @@
         },
         "additionalProperties": false
       },
+      "SortingInfo": {
+        "type": "object",
+        "properties": {
+          "selector": {
+            "type": "string",
+            "nullable": true
+          },
+          "desc": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
       "UserDto": {
         "type": "object",
         "properties": {
           "id": {
             "type": "integer",
-            "format": "int32"
+            "format": "int32",
+            "nullable": true
           },
           "userName": {
             "type": "string",
@@ -432,6 +530,11 @@
       "UserList": {
         "type": "object",
         "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
           "userName": {
             "type": "string",
             "nullable": true

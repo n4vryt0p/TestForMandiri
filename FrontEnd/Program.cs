@@ -12,6 +12,7 @@ _ = builder.Services.AddHttpContextAccessor().AddHttpClient("BaseClient", httpCl
     httpClient.DefaultRequestVersion = new Version(3, 0);
 });
 _ = builder.Services.AddSingleton<IUserManage, UserManage>();
+_ = builder.Services.AddSingleton<IJsonOptions, JsonOpts>();
 
 var app = builder.Build();
 

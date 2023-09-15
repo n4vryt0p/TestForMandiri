@@ -6,7 +6,10 @@ using BackEnd.Data.Models;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using System.ComponentModel.DataAnnotations.Schema;
+using System.Globalization;
+using System.Text.Json.Serialization;
+using System.Text.Json;
+using DevExtreme.AspNet.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -61,10 +64,44 @@ var app = builder.Build();
 
 #region User
 app.MapGet("/userlist", async (DataContext db) => await db.AppUsers.AsNoTracking().Select(u => new UserList(
-        u.UserName, u.Email, u.AppUserDetail!.Alamat, u.AppUserDetail.NoKtp, u.AppUserDetail.NamaLengkap)).ToListAsync())
+        u.Id,u.UserName, u.Email, u.AppUserDetail!.Alamat, u.AppUserDetail.NoKtp, u.AppUserDetail.NamaLengkap)).ToListAsync())
     .WithTags("Users")
     .WithName("UserList")
     .WithOpenApi();
+
+_ = app.MapPost("/userlistaerverside", async (GridServerSide set, DataContext db, UserManager<AppUser> userManager) =>
+{
+    
+    var userDatas = db.AppUsers.Include(yy => yy.Children).Include(ttt => ttt.AppUserDetail).IgnoreQueryFilters().AsNoTracking();
+    
+    var totCount = userDatas.Count();
+
+    //var sorting = set.Sorting;
+    //if (sorting?.Length > 0)
+    //    userDatas = userDatas.OrderBys(sorting[0].Selector, sorting[0].Desc);
+
+    var dats = await userDatas.Skip(set.Skip ?? 0).Take(set.Take ?? 10).ToListAsync();
+
+    var userDto = new List<UserDto>();
+    foreach (var item in dats)
+        userDto.Add(new UserDto
+        (
+            item.Id,
+            item.UserName,
+            "******",
+            item.AppUserDetail?.NamaLengkap,
+            item.Email,
+            item.AppUserDetail?.Alamat,
+            item.AppUserDetail?.NoKtp,
+            await userManager.GetRolesAsync(item),
+            item.Children?.Count == 0 ? null : item.Children?.Select(tt => tt.Id).ToList()
+        ));
+    return new { totalCount = totCount, data = userDto };
+}
+            )
+            .WithTags("Users")
+            .WithName("GetUserListServersided")
+            .WithOpenApi();
 
 //Add User
 _ = app.MapPost("/user/add", async (UserDto userdto, UserManager<AppUser> userManager, DataContext db) =>
@@ -77,7 +114,7 @@ _ = app.MapPost("/user/add", async (UserDto userdto, UserManager<AppUser> userMa
         AppUserDetail = new AppUserDetail()
     };
 
-    if (string.IsNullOrEmpty(userdto.NamaLengkap) && string.IsNullOrEmpty(userdto.Alamat) && userdto.NoKtp > 0)
+    if (!string.IsNullOrEmpty(userdto.NamaLengkap) && userdto.NoKtp > 0)
     {
         user.AppUserDetail = new AppUserDetail
         {
@@ -202,7 +239,7 @@ _ = app.MapGet("/userandroles", async (DataContext db) =>
     return new GroupRoleDdl
     {
         Groups = await db.AppUsers.AsNoTracking()//.Where(tt => tt.Id != userId)
-            .Select(x => new GroupDdl { Id = x.Id, Text = x.UserName })
+            .Select(x => new GroupDdl { Id = x.Id, Text = $"{x.UserName} ({x.AppUserDetail!.NamaLengkap})" })
             .ToListAsync(),
         Roles = await db.AppRoles.AsNoTracking()
             .Select(x => new GroupDdl
@@ -303,9 +340,9 @@ await dataContext.Database.EnsureCreatedAsync();
 app.Run();
 
 #region Records
-internal record UserList(string? UserName, string? Email, string? Alamat, long? NoKtp, string? NamaLengkap);
+internal record UserList(int? Id, string? UserName, string? Email, string? Alamat, long? NoKtp, string? NamaLengkap);
 
-internal record UserDto(int Id, string? UserName, string? Pass, string? NamaLengkap, string? Email, string? Alamat, long? NoKtp, IEnumerable<string>? Roles, IEnumerable<int>? Users)
+internal record UserDto(int? Id, string? UserName, string? Pass, string? NamaLengkap, string? Email, string? Alamat, long? NoKtp, IEnumerable<string>? Roles, IEnumerable<int>? Users)
 {
     public int[] UserIds => Users?.ToArray() ?? Array.Empty<int>();
 }
@@ -364,5 +401,31 @@ public class RoleDto
     public string RoleName { get; set; } = null!;
     public int GroupId { get; set; }
     public string? GroupName { get; set; }
+}
+public class GridServerSide
+{
+    [JsonConstructor]
+    public GridServerSide(int? skip, int? take, bool? requireTotalCount, string? sort, List<object>? filter)
+    {
+        Skip = skip;
+        Take = take;
+        RequireTotalCount = requireTotalCount;
+        Sort = sort;
+        Filter = filter;
+    }
+    public int? Skip { get; set; }
+    public int? Take { get; set; }
+    public bool? RequireTotalCount { get; set; }
+    public string? Sort { get; set; }
+    public List<object>? Filter { get; set; }
+    public virtual SortingInfo[]? Sorting => !string.IsNullOrEmpty(Sort) ? JsonSerializer.Deserialize<List<SortingInfo>>(Sort, new JsonSerializerOptions
+    {
+        DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+        PropertyNameCaseInsensitive = true,
+        AllowTrailingCommas = true,
+        WriteIndented = false
+    })!.ToArray() : null;
+    //public virtual IList? Filtering => string.IsNullOrEmpty(Filter) ? null : Filter?.ToList();
 }
 #endregion

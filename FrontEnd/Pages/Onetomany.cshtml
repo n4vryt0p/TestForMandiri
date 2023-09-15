@@ -1,0 +1,23 @@
+﻿@page "{handler?}"
+@model FrontEnd.Pages.OnetomanyModel
+@{
+}
+@Html.AntiForgeryToken()
+<div class="row">
+    <div class="col-lg-12">
+        <div class="card ribbon-box">
+            <div class="card-header d-flex align-items-center">
+                <h5 class="card-title mb-0 flex-grow-1">Relasi one to many table AspNetUsers self-referencing</h5>
+            </div>
+            <div class="card-body">
+                <div id="roleGrid"></div>
+            </div>
+        </div>
+    </div>
+</div>
+@section scripts{
+    <script type="text/javascript">
+        var $users = @Html.Raw(Json.Serialize(Model.GroupRoleDdl?.Groups));
+    </script>
+    <script src="~/js/onetomany-page.js"></script>
+}

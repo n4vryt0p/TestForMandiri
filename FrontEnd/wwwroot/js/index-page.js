@@ -1,12 +1,12 @@
 ﻿"use strict"
 $(document).ready(function () {
-    $('#roleGrid').dxDataGrid({
+    $('#oneGrid').dxDataGrid({
         dataSource: DevExpress.data.AspNet.createStore({
             key: 'id',
-            loadUrl: `/Index/Read`,
-            insertUrl: `/Index/RoleManage/Create`,
-            updateUrl: `/Index/RoleManage/Edit`,
-            deleteUrl: `/Index/RoleManage/Delete`,
+            loadUrl: `/Read`,
+            insertUrl: `/Create`,
+            updateUrl: `/Edit`,
+            deleteUrl: `/Delete`,
             onBeforeSend(method, ajaxOptions) {
                 let antiForgeryToken = document.getElementsByName("__RequestVerificationToken")[0].value;
                 if (antiForgeryToken) {
@@ -29,12 +29,50 @@ $(document).ready(function () {
         },
         columns: [
             {
-            dataField: 'roleName',
-            caption: 'Nama Role',
-            validationRules: [{
-                type: 'required',
-                message: 'Nama role harus diisi.',
-            }],
+                dataField: 'userName',
+                caption: 'User Name',
+                validationRules: [{
+                    type: 'required',
+                    message: 'User Name harus diisi.',
+                }],
+            },
+            {
+                dataField: 'pass',
+                caption: 'Password',
+                validationRules: [{
+                    type: 'required',
+                    message: 'Password harus diisi.',
+                }],
+                visible: false
+            },
+            {
+                dataField: 'email',
+                caption: 'Email',
+                validationRules: [{
+                    type: 'required',
+                    message: 'Email harus diisi.',
+                }],
+            },
+            {
+                dataField: 'namaLengkap',
+                caption: 'Nama Lengkap',
+                validationRules: [{
+                    type: 'required',
+                    message: 'Nama Lengkap harus diisi.',
+                }],
+            },
+            {
+                dataField: 'noKtp',
+                caption: 'No. KTP',
+                dataType: "number",
+                validationRules: [{
+                    type: 'required',
+                    message: 'No. KTP harus diisi.',
+                }],
+            },
+            {
+                dataField: 'alamat',
+                caption: 'Alamat'
             },
         ],
         editing: {
@@ -43,17 +81,31 @@ $(document).ready(function () {
             allowUpdating: true,
             allowDeleting: true,
             popup: {
-                title: 'Role Info',
+                title: 'User Info',
                 showTitle: true,
                 width: 700,
                 height: 525,
             },
             form: {
-                items: [{
-                    itemType: 'group',
-                    colSpan: 2,
-                    items: ['roleName'],
-                }],
+                items: [
+                    {
+                        itemType: 'group',
+                        colCount: 2,
+                        colSpan: 2,
+                        items: ['userName', 'pass']
+                    },
+                    {
+                        itemType: 'group',
+                        colSpan: 2,
+                        items: ['email']
+                    },
+                    {
+                        itemType: 'group',
+                        caption: "Detail",
+                        colSpan: 2,
+                        items: ['namaLengkap', 'noKtp', 'alamat'],
+                    }
+                ],
             },
         },
     });
