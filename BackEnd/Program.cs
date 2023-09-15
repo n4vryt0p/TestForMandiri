@@ -154,7 +154,7 @@ _ = app.MapPost("/user/add", async (UserDto userdto, UserManager<AppUser> userMa
     .WithName("AddUser")
     .WithOpenApi();
 
-//Edit User
+//Edit User1
 _ = app.MapPut("/user/edit/{userId}", async (int userId, UserDto userdto, UserManager<AppUser> userManager, DataContext db) =>
 {
     var userX = await db.AppUsers.Include(t => t.AppUserDetail).AsNoTracking().FirstOrDefaultAsync(x => x.Id == userId).ConfigureAwait(false);
@@ -176,6 +176,7 @@ _ = app.MapPut("/user/edit/{userId}", async (int userId, UserDto userdto, UserMa
                 child.ParentId = null;
 
             db.AppUsers.UpdateRange(userChildExist);
+            _ = await db.SaveChangesAsync();
         }
 
         var userChild = await db.AppUsers.Where(ee => userdto.UserIds.Contains(ee.Id)).ToListAsync();
@@ -187,6 +188,25 @@ _ = app.MapPut("/user/edit/{userId}", async (int userId, UserDto userdto, UserMa
             db.AppUsers.UpdateRange(userChild);
         }
     }
+
+    _ = db.AppUsers.Update(userX);
+    _ = await db.SaveChangesAsync();
+
+    return Results.Ok();
+})
+        .WithTags("Users")
+        .WithName("UpdateUser")
+        .WithOpenApi();
+
+//Edit User2
+_ = app.MapPut("/user/edit2/{userId}", async (int userId, UserDto userdto, UserManager<AppUser> userManager, DataContext db) =>
+{
+    var userX = await userManager.FindByIdAsync(userId.ToString()).ConfigureAwait(false);
+    if (userX == null)
+        return Results.NotFound("No such user");
+
+    if (!string.IsNullOrEmpty(userdto.UserName)) userX.UserName = userdto.UserName;
+    if (!string.IsNullOrEmpty(userdto.Email)) userX.Email = userdto.Email;
 
     StringBuilder msg = new();
 
@@ -213,7 +233,7 @@ _ = app.MapPut("/user/edit/{userId}", async (int userId, UserDto userdto, UserMa
     return Results.Ok();
 })
         .WithTags("Users")
-        .WithName("UpdateUser")
+        .WithName("UpdateUser2")
         .WithOpenApi();
 
 //Delete User

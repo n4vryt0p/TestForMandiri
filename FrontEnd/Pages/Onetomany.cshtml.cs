@@ -1,11 +1,12 @@
 using System.Text.Json;
-using DevExtreme.AspNet.Data;
 using FrontEnd.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace FrontEnd.Pages;
 
+[AllowAnonymous]
 public class OnetomanyModel : PageModel
 {
     private readonly IUserManage _manageEngineApi;
