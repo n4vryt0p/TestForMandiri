@@ -1,5 +1,5 @@
 # TestForMandiri
-Asessment, Test
+Asessment, Test.
 
 Requirements:
 1. Visual Studio 2022
