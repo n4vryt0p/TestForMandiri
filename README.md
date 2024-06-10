@@ -15,6 +15,7 @@ Auto-create database saat running aplikasi, menggunakan in-memory database (tida
 
 2 buah aplikasi yang di running yaitu 
 - Backend,
-    Default url: http://localhost:5063
-    API doc url: http://localhost:5063/swagger
-- Frontend, default url: http://localhost:5144
+    a. Default url: http://localhost:5063
+    b. API doc url: http://localhost:5063/swagger
+- Frontend,
+    a. default url: http://localhost:5144
