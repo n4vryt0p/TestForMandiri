@@ -26,11 +26,15 @@ builder.Services.Configure<ForwardedHeadersOptions>(options =>
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContextPool<DataContext>((sp, options) =>
     {
-        _ = options.UseSqlServer(connectionString, b =>
-        {
-            _ = b.CommandTimeout(3600);
-            _ = b.EnableRetryOnFailure(2);
-        });
+        //In-Memory database, comment these if want to use another database
+        _ = options.UseInMemoryDatabase("TestDb");
+
+        //SQL Server database, uncomment these if you want to use SQL Server
+        //_ = options.UseSqlServer(connectionString, b =>
+        //{
+        //    _ = b.CommandTimeout(3600);
+        //    _ = b.EnableRetryOnFailure(2);
+        //});
     })
     .AddIdentity<AppUser, AppRole>(options =>
     {
