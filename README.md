@@ -14,8 +14,5 @@ Features:
 Auto-create database saat running aplikasi, menggunakan in-memory database (tidak perlu install database), untuk mengubah ke MSSQL Server database dapat diubah di aplikasi Backend, file program.cs
 
 2 buah aplikasi yang di running yaitu 
-- Backend,
-    a. Default url: http://localhost:5063
-    b. API doc url: http://localhost:5063/swagger
-- Frontend,
-    a. default url: http://localhost:5144
+- Backend, Default url: http://localhost:5063, API doc url: http://localhost:5063/swagger
+- Frontend, Default url: http://localhost:5144
