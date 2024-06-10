@@ -10,3 +10,11 @@ Features:
 2. FrontEnd - Razor Page
 3. Dockerize ready
 4. In-Memory Database for testing-only
+
+Auto-create database saat running aplikasi, menggunakan in-memory database (tidak perlu install database), untuk mengubah ke MSSQL Server database dapat diubah di aplikasi Backend, file program.cs
+
+2 buah aplikasi yang di running yaitu 
+- Backend,
+    Default url: http://localhost:5063
+    API doc url: http://localhost:5063/swagger
+- Frontend, default url: http://localhost:5144
